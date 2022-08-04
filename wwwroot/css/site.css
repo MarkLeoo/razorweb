@@ -16,3 +16,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.form-group {
+  margin-bottom: 20px;
+}
+.control-label {
+  margin-bottom: 10px;
+}
