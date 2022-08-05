@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Identity
+@using efcore.models
+@inject SignInManager<AppUser> SignInManager;
+@inject UserManager<AppUser> UserManager;
+
+<ul class="navbar-nav">
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-page="/Account/Manage/Index" asp-area="Identity">
+                Hello @UserManager.GetUserName(User)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-page="/Account/Logout" asp-area="Identity">Sign Out</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-page="/Account/Register" asp-area="Identity">Sign Up</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-page="/Account/Login" asp-area="Identity">Sign In</a>
+        </li>
+    }
+</ul>
