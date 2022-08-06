@@ -18,10 +18,13 @@ namespace efcore.Areas.Identity.Pages.Account
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public ConfirmEmailModel(UserManager<AppUser> userManager)
+        public ConfirmEmailModel(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
+
         }
 
         /// <summary>
@@ -45,8 +48,37 @@ namespace efcore.Areas.Identity.Pages.Account
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
-            return Page();
+
+            if (await isConfirmed(result, StatusMessage, _signInManager, user))
+            {
+                return RedirectToPage("/Index");
+            }
+            else
+            {
+                return Page();
+            }
+            // StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+
+            // if (result.Succeeded)
+            // {
+            //     await _signInManager.SignInAsync(user, isPersistent: false);
+            //     return RedirectToPage("/Index");
+            // }
+        }
+
+        public async Task<bool> isConfirmed(IdentityResult rs, string statusMessage, SignInManager<AppUser> signInManager, AppUser user)
+        {
+            if (rs.Succeeded)
+            {
+                statusMessage = "Thank you for confirming your email.";
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return true;
+            }
+            else
+            {
+                statusMessage = "Error confirming your email.";
+                return false;
+            }
         }
     }
 }

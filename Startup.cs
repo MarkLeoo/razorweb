@@ -73,6 +73,14 @@ namespace efcore
                 // Cấu hình đăng nhập
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
+                options.SignIn.RequireConfirmedAccount = true;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/login.html";
+                options.LogoutPath = "/Logout.html";
+                options.AccessDeniedPath = "/access-denied.html";
             });
 
         }
