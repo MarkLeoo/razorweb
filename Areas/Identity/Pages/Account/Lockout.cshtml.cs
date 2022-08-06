@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using efcore.models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace efcore.Areas.Identity.Pages.Account
@@ -18,8 +20,20 @@ namespace efcore.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+
+        private readonly UserManager<AppUser> _userManager;
+
+        public LockoutModel(UserManager<AppUser> userManager)
+        {
+            _userManager = userManager;
+        }
         public void OnGet()
         {
+            var min = _userManager.Options.Lockout.DefaultLockoutTimeSpan;
+            if (min != null)
+            {
+                ViewData["LockedTimeEnd"] = min.ToString(@"mm");
+            }
         }
     }
 }
