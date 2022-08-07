@@ -83,6 +83,22 @@ namespace efcore
                 options.AccessDeniedPath = "/access-denied.html";
             });
 
+            services.AddAuthentication()
+                    .AddGoogle(googleOptions =>
+                    {
+                        var googleConfig = Configuration.GetSection("Authentication:Google");
+                        googleOptions.ClientId = googleConfig["ClientId"];
+                        googleOptions.ClientSecret = googleConfig["ClientSecret"];
+                        googleOptions.CallbackPath = "/dang-nhap-tu-google";
+                    })
+                    .AddFacebook(facebookOptions =>
+                    {
+                        var facebookConfig = Configuration.GetSection("Authentication:Facebook");
+                        facebookOptions.AppId = facebookConfig["AppId"];
+                        facebookOptions.AppSecret = facebookConfig["AppSecret"];
+                        facebookOptions.CallbackPath = "/dang-nhap-tu-facebook";
+                    });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

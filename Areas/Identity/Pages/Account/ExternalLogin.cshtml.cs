@@ -152,6 +152,61 @@ namespace efcore.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                var registeredUser = await _userManager.FindByEmailAsync(Input.Email);
+                string externalEmail = null;
+                AppUser userEmailSystem = null;
+
+                // Kiểm tra user có cung cấp email không - Đây là trường hợp có
+                externalEmail = info.Principal.HasClaim(c => c.Type == ClaimTypes.Email) ? info.Principal.FindFirstValue(ClaimTypes.Email) : null;
+
+                userEmailSystem = externalEmail != null ? await _userManager.FindByEmailAsync(externalEmail) : null;
+
+                if (registeredUser != null && userEmailSystem != null)
+                {
+                    if (registeredUser.Id == userEmailSystem.Id)
+                    {
+                        var resultLink = await _userManager.AddLoginAsync(registeredUser, info);
+                        if (resultLink.Succeeded)
+                        {
+                            await _signInManager.SignInAsync(registeredUser, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Không liên kết được tài khoản, hãy sử dụng email khác");
+                        return Page();
+                    }
+                }
+
+                if (userEmailSystem != null && registeredUser == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Không hỗ trợ tạo tài khoản mới có email khác email từ dịch vụ ngoài");
+                    return Page();
+                }
+
+                if (userEmailSystem == null && (externalEmail == Input.Email))
+                {
+                    // Chưa có account => Tạo tài khoản
+
+                    var newUser = CreateUser();
+                    await _userStore.SetUserNameAsync(newUser, Input.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(newUser, Input.Email, CancellationToken.None);
+                    var resultNewUser = await _userManager.CreateAsync(newUser);
+                    if (resultNewUser.Succeeded)
+                    {
+                        await _userManager.AddLoginAsync(newUser, info);
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                        await _userManager.ConfirmEmailAsync(newUser, code);
+                        await _signInManager.SignInAsync(newUser, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Không tạo được tài khoản mới");
+                        return Page();
+                    }
+                }
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
