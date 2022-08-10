@@ -1,5 +1,6 @@
 using Album.Mail;
 using efcore.models;
+using App.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -98,6 +99,8 @@ namespace efcore
                         facebookOptions.AppSecret = facebookConfig["AppSecret"];
                         facebookOptions.CallbackPath = "/dang-nhap-tu-facebook";
                     });
+
+            services.AddSingleton<IdentityErrorDescriber, AddIdentityErrorDescriber>();
 
         }
 

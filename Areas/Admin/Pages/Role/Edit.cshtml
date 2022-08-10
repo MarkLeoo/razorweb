@@ -1,7 +1,7 @@
-﻿@page "/admin/add-role"
-@model App.Admin.Role.CreateModel
+﻿@page "/admin/edit-role/{roleid}"
+@model App.Admin.Role.EditModel
 @{
-    ViewData["Title"] = "Create a new role";
+    ViewData["Title"] = "Update a role";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -18,7 +18,7 @@
                 <span asp-validation-for="Input.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Update" class="btn btn-primary" />
                 <a class="btn btn-secondary" asp-page="./Index">List role</a>
             </div>
         </form>

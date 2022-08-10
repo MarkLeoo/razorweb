@@ -1,0 +1,44 @@
+﻿@page "/admin/members"
+@model App.Admin.User.IndexModel
+@{
+    ViewData["Title"] = "List user";
+    var i = 0;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<partial name="_StatusMessage" model="@Model.StatusMessage" />
+
+<p>Total number of members: @Model.totalUsers member</p>
+
+<table class="table table-dark table-striped table-hover table-bordered">
+    <tr>
+        <th>Index</th>
+        <th>Name user</th>
+        <th>Role</th>
+        <th>Action</th>
+    </tr>
+    @foreach (var user in Model.users)
+    {
+        <tr>
+            <td>@(++i)</td>
+            <td>@user.UserName</td>
+            <td>@user.RoleNames</td>
+            <td>
+                <a class="btn btn-info" asp-page="./AddRole" asp-route-id="@user.Id">Add role</a>
+                <a class="btn btn-info" asp-page="./SetPassword" asp-route-id="@user.Id">Set password</a>
+            </td>
+        </tr>
+    }
+</table>
+
+
+@{
+    var pagingModel = new MarkLeo.Helpers.PagingModel()
+    {
+        currentPage = Model.currentPage,
+        countPages = Model.countPages,
+        generateUrl = (int? pages) => Url.Page("./Index", new { pages = pages })
+    };
+    await Html.RenderPartialAsync("_Paging", pagingModel);
+}
