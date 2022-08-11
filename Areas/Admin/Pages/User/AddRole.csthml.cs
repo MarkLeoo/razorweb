@@ -19,14 +19,18 @@ namespace App.Admin.User
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly MyBlogContext _context;
+
         public SetRoleModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            MyBlogContext myBlogContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _context = myBlogContext;
         }
 
         [TempData]
@@ -39,6 +43,9 @@ namespace App.Admin.User
         public string[] RoleNames { get; set; }
 
         public SelectList allRoles { get; set; }
+
+        public List<IdentityRoleClaim<string>> claimsInRole { get; set; }
+        public List<IdentityUserClaim<string>> claimsInUserClaim { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -55,7 +62,23 @@ namespace App.Admin.User
 
             allRoles = new SelectList(roleName);
 
+            GetClaims(id);
+
             return Page();
+        }
+
+        void GetClaims(string id)
+        {
+            var listRoles = from r in _context.Roles
+                            join ur in _context.UserRoles on r.Id equals ur.RoleId
+                            where ur.UserId == id
+                            select r;
+            var _claimsInRole = from c in _context.RoleClaims
+                                join r in listRoles on c.RoleId equals r.Id
+                                select c;
+            claimsInRole = _claimsInRole.ToList();
+
+            claimsInUserClaim = (from c in _context.UserClaims where c.UserId == id select c).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string id)
@@ -66,6 +89,8 @@ namespace App.Admin.User
             {
                 return NotFound($"Unable to load user with ID '{id}'");
             }
+
+            GetClaims(id);
 
             var OldRoleNames = (await _userManager.GetRolesAsync(user)).ToArray();
 

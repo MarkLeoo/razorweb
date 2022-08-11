@@ -22,6 +22,21 @@
                 <a class="btn btn-secondary" asp-page="./Index">List role</a>
             </div>
         </form>
+        <hr>
+        <a class="btn btn-info" asp-page="./AddRoleClaim" asp-route-roleid="@Model.role.Id">Thêm Claim</a>
+        @if (Model.Claims.Count > 0)
+        {
+            <p>Claims of role</p>
+            <ul class="mt-3">
+                @foreach (var claim in Model.Claims)
+                {
+                    <li>
+                        <a class="btn btn-secondary" asp-page="./EditRoleClaim" asp-route-claimid="@claim.Id">@claim.ClaimType:
+                            @claim.ClaimValue</a>
+                    </li>
+                }
+            </ul>
+        }
     </div>
 </div>
 

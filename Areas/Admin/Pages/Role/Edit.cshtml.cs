@@ -2,13 +2,14 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using App.Admin.Roles;
 using efcore.models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace App.Admin.Role
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AllowedEditRole")]
     public class EditModel : RolePageModel
     {
         public EditModel(RoleManager<IdentityRole> roleManager, MyBlogContext myBlogContext) : base(roleManager, myBlogContext)
@@ -26,6 +27,8 @@ namespace App.Admin.Role
         [BindProperty]
         public InputModel Input { get; set; }
 
+        public List<IdentityRoleClaim<string>> Claims { get; set; }
+
         public IdentityRole role { get; set; }
 
         public async Task<IActionResult> OnGet(string roleid)
@@ -38,6 +41,7 @@ namespace App.Admin.Role
                 {
                     Name = role.Name
                 };
+                Claims = _context.RoleClaims.Where(rc => rc.RoleId == role.Id).ToList();
                 return Page();
             }
             return NotFound("Can not find a role");
@@ -48,6 +52,7 @@ namespace App.Admin.Role
             if (roleid == null) return NotFound("Can not find a role");
             role = await _roleManager.FindByIdAsync(roleid);
             if (role == null) return NotFound("Can not find a role");
+            Claims = _context.RoleClaims.Where(rc => rc.RoleId == role.Id).ToList();
             if (!ModelState.IsValid)
             {
                 return Page();

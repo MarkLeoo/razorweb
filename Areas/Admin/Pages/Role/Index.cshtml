@@ -19,10 +19,16 @@
     @foreach (var role in Model.roles)
     {
         <tr>
-            <td>@role.Name</td>
             <td>
-                <a class="btn btn-info" asp-page="./Edit" asp-route-id="@role.Id">Update</a>
-                <a class="btn btn-danger" asp-page="./Delete" asp-route-id="@role.Id">Delete</a>
+                <p>@role.Name</p>
+                @foreach (var claim in role.Claims)
+                {
+                    <small>@claim</small>
+                }
+            </td>
+            <td>
+                <a class="btn btn-info" asp-page="./Edit" asp-route-roleid="@role.Id">Update</a>
+                <a class="btn btn-danger" asp-page="./Delete" asp-route-roleid="@role.Id">Delete</a>
             </td>
         </tr>
     }

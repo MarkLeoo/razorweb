@@ -13,11 +13,29 @@ namespace App.Admin.Roles
         {
         }
 
-        public List<IdentityRole> roles { get; set; }
-
-        public void OnGet()
+        public class RoleModel : IdentityRole
         {
-            roles = _roleManager.Roles.OrderBy(r => r.Name).ToList();
+            public string[] Claims { get; set; }
+        }
+
+        public List<RoleModel> roles { get; set; }
+
+        public async Task OnGet()
+        {
+            var r = _roleManager.Roles.OrderBy(r => r.Name).ToList();
+            roles = new List<RoleModel>();
+            foreach (var _r in r)
+            {
+                var claims = await _roleManager.GetClaimsAsync(_r);
+                var claimsString = claims.Select(c => c.Type + " = " + c.Value);
+                var rm = new RoleModel()
+                {
+                    Name = _r.Name,
+                    Id = _r.Id,
+                    Claims = claimsString.ToArray()
+                };
+                roles.Add(rm);
+            }
         }
 
         public void OnPost() => RedirectToPage();

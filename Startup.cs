@@ -102,6 +102,17 @@ namespace efcore
 
             services.AddSingleton<IdentityErrorDescriber, AddIdentityErrorDescriber>();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AllowedEditRole", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    // policyBuilder.RequireRole("Admin");
+                    // policyBuilder.RequireRole("Editor");
+                    policyBuilder.RequireClaim("manage.role", "add", "update");
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
