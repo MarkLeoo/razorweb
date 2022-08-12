@@ -14,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Security.Requirements;
+using Microsoft.AspNetCore.Authorization;
 
 namespace efcore
 {
@@ -111,7 +113,23 @@ namespace efcore
                     // policyBuilder.RequireRole("Editor");
                     policyBuilder.RequireClaim("manage.role", "add", "update");
                 });
+                options.AddPolicy("InGenZ", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.Requirements.Add(new GenZRequirement());
+                });
+
+                options.AddPolicy("ShowAdminMenu", policyBuilder =>
+                {
+                    policyBuilder.RequireRole("Admin");
+                });
+
+                options.AddPolicy("CanUpdateArticle", policyBuilder =>
+                {
+                    policyBuilder.Requirements.Add(new ArticleUpdateRequirement());
+                });
             });
+            services.AddTransient<IAuthorizationHandler, AppAuthorizationHandler>();
 
         }
 

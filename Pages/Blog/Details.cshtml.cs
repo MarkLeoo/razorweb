@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using efcore.models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace efcore.Pages_Blog
 {
+    [Authorize(Policy = "InGenZ")]
     public class DetailsModel : PageModel
     {
         private readonly efcore.models.MyBlogContext _context;
@@ -18,7 +20,7 @@ namespace efcore.Pages_Blog
             _context = context;
         }
 
-      public Article Article { get; set; } = default!; 
+        public Article Article { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -32,7 +34,7 @@ namespace efcore.Pages_Blog
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Article = article;
             }

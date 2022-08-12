@@ -7,20 +7,26 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using efcore.models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace efcore.Pages_Blog
 {
     public class EditModel : PageModel
     {
         private readonly efcore.models.MyBlogContext _context;
+        private readonly IAuthorizationService _authorizationService;
 
-        public EditModel(efcore.models.MyBlogContext context)
+        public EditModel(efcore.models.MyBlogContext context, IAuthorizationService authorizationService)
         {
             _context = context;
+            _authorizationService = authorizationService;
         }
 
         [BindProperty]
         public Article Article { get; set; } = default!;
+
+        [TempData]
+        public string StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,7 +35,7 @@ namespace efcore.Pages_Blog
                 return NotFound();
             }
 
-            var article =  await _context.Articles.FirstOrDefaultAsync(m => m.Id == id);
+            var article = await _context.Articles.FirstOrDefaultAsync(m => m.Id == id);
             if (article == null)
             {
                 return NotFound();
@@ -51,7 +57,16 @@ namespace efcore.Pages_Blog
 
             try
             {
-                await _context.SaveChangesAsync();
+                var canUpdate = await _authorizationService.AuthorizeAsync(this.User, Article, "CanUpdateArticle");
+                if (canUpdate.Succeeded)
+                {
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return Content("Không được quyền cập nhật");
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,7 +85,7 @@ namespace efcore.Pages_Blog
 
         private bool ArticleExists(int id)
         {
-          return (_context.Articles?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Articles?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
