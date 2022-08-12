@@ -38,7 +38,7 @@ namespace efcore
 
 
             services.AddRazorPages();
-            services.AddDbContext<MyBlogContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
             {
                 string connectionString = Configuration.GetConnectionString("MyBlogContext");
                 options.UseSqlServer(connectionString);
@@ -46,7 +46,7 @@ namespace efcore
 
             // Đăng ký identity
             services.AddIdentity<AppUser, IdentityRole>()
-                    .AddEntityFrameworkStores<MyBlogContext>()
+                    .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
 
             // services.AddDefaultIdentity<AppUser>()

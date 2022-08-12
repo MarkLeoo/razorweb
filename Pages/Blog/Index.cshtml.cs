@@ -13,9 +13,9 @@ namespace efcore.Pages_Blog
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly efcore.models.MyBlogContext _context;
+        private readonly efcore.models.AppDbContext _context;
 
-        public IndexModel(efcore.models.MyBlogContext context)
+        public IndexModel(efcore.models.AppDbContext context)
         {
             _context = context;
         }

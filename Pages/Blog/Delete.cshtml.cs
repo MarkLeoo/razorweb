@@ -11,15 +11,15 @@ namespace efcore.Pages_Blog
 {
     public class DeleteModel : PageModel
     {
-        private readonly efcore.models.MyBlogContext _context;
+        private readonly efcore.models.AppDbContext _context;
 
-        public DeleteModel(efcore.models.MyBlogContext context)
+        public DeleteModel(efcore.models.AppDbContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-      public Article Article { get; set; } = default!;
+        public Article Article { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -34,7 +34,7 @@ namespace efcore.Pages_Blog
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Article = article;
             }

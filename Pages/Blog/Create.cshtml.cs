@@ -11,9 +11,9 @@ namespace efcore.Pages_Blog
 {
     public class CreateModel : PageModel
     {
-        private readonly efcore.models.MyBlogContext _context;
+        private readonly efcore.models.AppDbContext _context;
 
-        public CreateModel(efcore.models.MyBlogContext context)
+        public CreateModel(efcore.models.AppDbContext context)
         {
             _context = context;
         }

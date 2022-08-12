@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace efcore.models
 {
-    public class MyBlogContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
-        public MyBlogContext(DbContextOptions<MyBlogContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 
         }

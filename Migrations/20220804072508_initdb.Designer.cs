@@ -11,7 +11,7 @@ using efcore.models;
 
 namespace efcore.Migrations
 {
-    [DbContext(typeof(MyBlogContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20220804072508_initdb")]
     partial class initdb
     {

@@ -13,9 +13,9 @@ namespace efcore.Pages_Blog
     [Authorize(Policy = "InGenZ")]
     public class DetailsModel : PageModel
     {
-        private readonly efcore.models.MyBlogContext _context;
+        private readonly efcore.models.AppDbContext _context;
 
-        public DetailsModel(efcore.models.MyBlogContext context)
+        public DetailsModel(efcore.models.AppDbContext context)
         {
             _context = context;
         }

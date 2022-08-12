@@ -13,10 +13,10 @@ namespace efcore.Pages_Blog
 {
     public class EditModel : PageModel
     {
-        private readonly efcore.models.MyBlogContext _context;
+        private readonly efcore.models.AppDbContext _context;
         private readonly IAuthorizationService _authorizationService;
 
-        public EditModel(efcore.models.MyBlogContext context, IAuthorizationService authorizationService)
+        public EditModel(efcore.models.AppDbContext context, IAuthorizationService authorizationService)
         {
             _context = context;
             _authorizationService = authorizationService;
